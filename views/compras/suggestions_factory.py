@@ -11,7 +11,12 @@ def crear_sugerencias():
         ),
         height=150,
         visible=False,
-        border= ft.border.all(1, ft.Colors.GREY_700),
+        border=ft.Border(
+            top=ft.BorderSide(1, ft.Colors.GREY_700),
+            right=ft.BorderSide(1, ft.Colors.GREY_700),
+            bottom=ft.BorderSide(1, ft.Colors.GREY_700),
+            left=ft.BorderSide(1, ft.Colors.GREY_700),
+        ),
         border_radius=8,
         bgcolor="#2b2d31"
     )

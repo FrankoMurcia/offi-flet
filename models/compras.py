@@ -1,4 +1,5 @@
 from database.conexion import conectar
+from auth import session
 
 class Factura:
 
@@ -8,11 +9,17 @@ class Factura:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
-            SELECT COUNT(*)
-            FROM compra
-            WHERE codigo_generacion =?
-        """, (codigo_generacion,))
+        SELECT COUNT(*)
+        FROM compra
+        WHERE codigo_generacion=?
+        AND id_usuario=?
+        """, (
+            codigo_generacion,
+            id_usuario
+        ))
 
         existe = cursor.fetchone()[0] > 0
 
@@ -29,19 +36,24 @@ class Factura:
                 importaciones_gravadas_bienes,
                 importaciones_gravadas_servicios, ):
 
+        id_usuario = session.id()
+
+        if id_usuario is None:
+            raise Exception("No existe un usuario autenticado.")
+
         conn = conectar()
         cursor = conn.cursor()
 
         cursor.execute("""
-        INSERT INTO compra(fecha, codigo_generacion, numero_control, sello_recepcion, subtotal, iva, iva_percibido, total, id_tipo_documento, id_emisor, id_clase_documento, clasificacion, sector, tipo_costo_gasto, tipo_operacion, id_periodo,
+        INSERT INTO compra(id_usuario, fecha, codigo_generacion, numero_control, sello_recepcion, subtotal, iva, iva_percibido, total, id_tipo_documento, id_emisor, id_clase_documento, clasificacion, sector, tipo_costo_gasto, tipo_operacion, id_periodo,
             compras_internas_exentas,
             internaciones_exentas_no_sujetas,
             importaciones_exentas_no_sujetas,
             internaciones_gravadas_bienes,
             importaciones_gravadas_bienes,
             importaciones_gravadas_servicios)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        """,(fecha, codigo_generacion, numero_control, sello_recepcion, subtotal, iva, iva_percibido,total, id_tipo_documento, id_emisor, id_clase_documento, clasificacion, sector, tipo_costo_gasto, tipo_operacion, id_periodo,
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """,(id_usuario, fecha, codigo_generacion, numero_control, sello_recepcion, subtotal, iva, iva_percibido,total, id_tipo_documento, id_emisor, id_clase_documento, clasificacion, sector, tipo_costo_gasto, tipo_operacion, id_periodo,
             compras_internas_exentas,
             internaciones_exentas_no_sujetas,
             importaciones_exentas_no_sujetas,
@@ -58,7 +70,14 @@ class Factura:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM compra")
+        id_usuario = session.id()
+
+        cursor.execute("""
+        SELECT *
+        FROM compra
+        WHERE id_usuario=?
+        ORDER BY fecha DESC
+        """, (id_usuario,))
 
         datos = cursor.fetchall()
 
@@ -96,6 +115,8 @@ class Factura:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
         UPDATE compra
         SET fecha=?,
@@ -124,6 +145,7 @@ class Factura:
             id_periodo=?
 
         WHERE id=?
+        AND id_usuario=?
         """, (
             fecha,
             codigo_generacion,
@@ -150,7 +172,8 @@ class Factura:
             tipo_operacion,
             id_periodo,
 
-            id_compra
+            id_compra,
+            id_usuario
         ))
 
         conn.commit()
@@ -162,10 +185,17 @@ class Factura:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "DELETE FROM compra WHERE id=?",
-            (id_compra,)
-        )
+        id_usuario = session.id()
+
+        cursor.execute("""
+        DELETE FROM compra
+        WHERE id=?
+        AND id_usuario=?
+        """,
+        (
+            id_compra,
+            id_usuario
+        ))
 
         conn.commit()
         conn.close()
@@ -176,12 +206,18 @@ class Factura:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
-            SELECT *
-            FROM compra
-            WHERE id_periodo=?
-            ORDER BY fecha DESC
-        """, (id_periodo,))
+        SELECT *
+        FROM compra
+        WHERE id_periodo=?
+        AND id_usuario=?
+        ORDER BY fecha DESC
+        """, (
+            id_periodo,
+            id_usuario
+        ))
 
         datos = cursor.fetchall()
 

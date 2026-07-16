@@ -57,7 +57,7 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
             periodos = Periodo.obtener_todos()
 
             if periodos:
-                dd_periodos.value = str(periodos[-1][0])
+                dd_periodos.value = str(periodos[0][0])
 
             page.update()
 
@@ -102,7 +102,7 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
             state.periodo_actual
         )
 
-        nombre_periodo_actual.value = f"{periodo[1]} - {periodo[2]}"
+        nombre_periodo_actual.value = f"{periodo[2]} - {periodo[3]}"
 
         btn_nueva_factura.disabled = False
 
@@ -120,7 +120,22 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
 
         modal_periodo = ft.AlertDialog(
             modal=True,
-            title=ft.Text("Seleccionar Período"),
+            title=ft.Row(
+                controls=[
+                    ft.Text(
+                        "Seleccionar Período",
+                        size=20,
+                        weight=ft.FontWeight.BOLD,
+                        expand=True
+                    ),
+                    ft.IconButton(
+                        icon=ft.Icons.CLOSE,
+                        tooltip="Cerrar",
+                        on_click=lambda e: cerrar_modal(modal_periodo)
+                    ),
+                ],
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
             content=ft.Container(
                 width=350,
                 content=dd_periodos

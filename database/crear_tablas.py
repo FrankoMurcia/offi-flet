@@ -5,30 +5,53 @@ def crear_tablas():
     conn = conectar()
     cursor = conn.cursor()
 
+    # Usuarios
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuario(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        usuario TEXT NOT NULL UNIQUE,
+
+        contraseña TEXT NOT NULL,
+
+        nombre TEXT NOT NULL,
+
+        rol TEXT NOT NULL,
+
+        activo INTEGER NOT NULL DEFAULT 1,
+
+        primer_login INTEGER NOT NULL DEFAULT 1,
+
+        fecha_creacion TEXT,
+
+        ultimo_login TEXT
+
+    )
+    """)
+
     # Emisor
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS emisor(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   
+        id_usuario INTEGER NOT NULL,
+                   
         nombre_comercial TEXT,
         razon_social TEXT,
-        nit INTEGER UNIQUE,
-        dui INTEGER,
-        nrc INTEGER,
+        nit TEXT,
+        dui TEXT,
+        nrc TEXT,
         tamaño_contribuyente INTEGER,
         actividad_economica TEXT,
         telefono TEXT,
         correo_electronico TEXT,
-        direccion TEXT
-    )
-    """)
-
-    # Producto
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS producto(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        cantidad INTEGER,
-        precio REAL
+        direccion TEXT,
+        
+        UNIQUE(id_usuario, nit),
+        UNIQUE(id_usuario, nrc),
+                   
+        FOREIGN KEY(id_usuario)
+            REFERENCES usuario(id)
     )
     """)
 
@@ -36,6 +59,9 @@ def crear_tablas():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS compra(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   
+        id_usuario INTEGER NOT NULL,
+                   
         fecha TEXT,
                    
         codigo_generacion TEXT,
@@ -64,32 +90,17 @@ def crear_tablas():
         tipo_operacion INTEGER NOT NULL,
                    
         id_periodo INTEGER,
-        UNIQUE(codigo_generacion)
-    )
-    """)
+                   
+        UNIQUE(id_usuario, codigo_generacion)
+        
+        FOREIGN KEY(id_usuario)
+            REFERENCES usuario(id),
 
-    # Detalle
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS detalle_compra(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_compra INTEGER,
-        id_producto INTEGER,
-        cantidad INTEGER,
-        precio_unitario REAL,
-        subtotal REAL
-    )
-    """)
+        FOREIGN KEY(id_emisor)
+            REFERENCES emisor(id),
 
-    #Detalle_Clasificador
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS detalle_clasificador(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_tipo_documento INTEGER NOT NULL,
-        id_clase_documento INTEGER NOT NULL,
-        id_clasificacion INTEGER NOT NULL,
-        id_sector INTEGER NOT NULL,
-        id_tipo_costo_gasto INTEGER NOT NULL,
-        id_tipo_operacion INTEGER NOT NULL
+        FOREIGN KEY(id_periodo)
+            REFERENCES periodo(id)   
     )
     """)
 
@@ -97,8 +108,14 @@ def crear_tablas():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS periodo(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   
+        id_usuario INTEGER NOT NULL,
+                   
         nombre TEXT,
-        anio INTEGER     
+        anio INTEGER,
+        
+        FOREIGN KEY(id_usuario)
+            REFERENCES usuario(id)
     )
     """)
 

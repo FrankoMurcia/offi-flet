@@ -76,11 +76,6 @@ def mostrar_modal_clasificacion(page, state, controls):
         dialog.open = False
         page.update()
 
-    # txt_clasificacion.value = str(state.clasificacion_seleccionada) if state.clasificacion_seleccionada else None
-    # txt_sector.value = str(state.sector_seleccionado) if state.sector_seleccionado else None
-    # txt_tipo_costo.value = str(state.tipo_costo_gasto_seleccionado) if state.tipo_costo_gasto_seleccionado else None
-    # txt_tipo_operacion.value = str(state.tipo_operacion_seleccionado) if state.tipo_operacion_seleccionado else None
-
     def aceptar(e):
 
         if not dd_clasificacion.value:
@@ -122,12 +117,6 @@ def mostrar_modal_clasificacion(page, state, controls):
         state.tipo_operacion_seleccionado = int(dd_tipo_operacion.value or 0)
 
         actualizar_textos(state, controls)
-
-        # textos
-        # txt_clasificacion.value = next(o.text for o in dd_clasificacion.options if o.key == dd_clasificacion.value)
-        # txt_sector.value = next(o.text for o in dd_sector.options if o.key == dd_sector.value)
-        # txt_tipo_costo.value = next(o.text for o in dd_tipo_costo.options if o.key == dd_tipo_costo.value)
-        # txt_tipo_operacion.value = next(o.text for o in dd_tipo_operacion.options if o.key == dd_tipo_operacion.value)
 
         dialog.open = False
         page.update()

@@ -11,7 +11,7 @@ from views.compras.form_actions import limpiar
 from views.compras.date_picker_factory import crear_date_picker
 from views.compras.classification_factory import crear_btn_clasificacion
 from views.compras.suggestions_factory import crear_sugerencias, registrar_eventos
-from views.compras.buttons_factory import crear_btn_nueva_factura, crear_btn_exportar_csv, crear_btn_exportar_excel
+from views.compras.buttons_factory import crear_btn_nueva_factura, crear_btn_exportar_csv, crear_btn_exportar_excel, crear_btn_exportar_casilla_163
 from views.compras.callbacks import crear_callback_modal
 from views.compras.compras_controller import ComprasController
 
@@ -107,6 +107,13 @@ def vista_compras(page: ft.Page, abrir_proveedor):
         mostrar_error=mostrar_error,
     )
 
+    btn_exportar_casilla_163 = crear_btn_exportar_casilla_163(
+        page=page,
+        state=state,
+        mostrar_mensaje=mostrar_mensaje,
+        mostrar_error=mostrar_error,
+    )
+
     cargar_dropdowns(state, controls, dd_periodos)
 
     mostrar_modal_periodo(
@@ -145,6 +152,7 @@ def vista_compras(page: ft.Page, abrir_proveedor):
                         ]),
                         btn_exportar_csv,
                         btn_exportar_excel,
+                        btn_exportar_casilla_163,
                         btn_nueva_factura,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN

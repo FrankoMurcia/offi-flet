@@ -10,7 +10,7 @@ def seleccionar_periodo(dd_periodos):
         dd_periodos.options = [
             ft.dropdown.Option(
                 key=str(p[0]),
-                text=f"{p[1]} - {p[2]}"
+                text=f"{p[2]} - {p[3]}"
             )
             for p in Periodo.obtener_todos()
         ]

@@ -1,4 +1,5 @@
 from database.conexion import conectar
+from auth import session
 
 class Emisor:
 
@@ -19,14 +20,19 @@ class Emisor:
 
     @staticmethod
     def guardar(nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica, telefono, correo_electronico, direccion):
+        
+        id_usuario = session.id()
 
+        if id_usuario is None:
+            raise Exception("No existe un usuario autenticado.")
+        
         conn = conectar()
         cursor = conn.cursor()
 
         cursor.execute("""
-        INSERT INTO emisor(nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica, telefono, correo_electronico, direccion)
-        VALUES(?,?,?,?,?,?,?,?,?,?)
-        """,(nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica,telefono, correo_electronico, direccion))
+        INSERT INTO emisor(id_usuario, nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica, telefono, correo_electronico, direccion)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?)
+        """,(id_usuario, nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica,telefono, correo_electronico, direccion))
 
         conn.commit()
         conn.close()
@@ -37,7 +43,15 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM emisor")
+        id_usuario = session.id()
+
+        cursor.execute("""
+        SELECT *
+        FROM emisor
+        WHERE id_usuario=?
+        ORDER BY nombre_comercial
+        """,
+        (id_usuario,))
 
         datos = cursor.fetchall()
 
@@ -51,12 +65,19 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
-            SELECT *
-            FROM emisor
-            WHERE nit LIKE ?
-            ORDER BY nombre_comercial
-        """, (f"{nit}%",))
+        SELECT *
+        FROM emisor
+        WHERE nit LIKE ?
+        AND id_usuario=?
+        ORDER BY nombre_comercial
+        """,
+        (
+            f"{nit}%",
+            id_usuario
+        ))
 
         datos = cursor.fetchall()
 
@@ -70,10 +91,18 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT nombre_comercial FROM emisor WHERE id=?",
-            (id_emisor,)
-        )
+        id_usuario = session.id()
+
+        cursor.execute("""
+        SELECT nombre_comercial
+        FROM emisor
+        WHERE id=?
+        AND id_usuario=?
+        """,
+        (
+            id_emisor,
+            id_usuario
+        ))
 
         dato = cursor.fetchone()
 
@@ -86,6 +115,7 @@ class Emisor:
 
         conn = conectar()
         cursor = conn.cursor()
+        id_usuario = session.id()
 
         cursor.execute("""
         UPDATE emisor
@@ -100,7 +130,8 @@ class Emisor:
             correo_electronico=?, 
             direccion=?
         WHERE id=?
-        """,(nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica, telefono, correo_electronico, direccion, id_emisor)) 
+        AND id_usuario=?
+        """,(nombre_comercial, razon_social, nit, dui, nrc, tamaño_contribuyente, actividad_economica, telefono, correo_electronico, direccion, id_emisor, id_usuario)) 
 
         conn.commit()
         conn.close()
@@ -111,10 +142,18 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "DELETE FROM emisor WHERE id=?",
-            (id_emisor,)
-        )
+        id_usuario = session.id()
+
+        cursor.execute("""
+        DELETE
+        FROM emisor
+        WHERE id=?
+        AND id_usuario=?
+        """,
+        (
+            id_emisor,
+            id_usuario
+        ))
 
         conn.commit()
         conn.close()
@@ -125,10 +164,18 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT COUNT(*) FROM emisor WHERE nit = ?",
-            (nit,)
-        )
+        id_usuario = session.id()
+
+        cursor.execute("""
+        SELECT COUNT(*)
+        FROM emisor
+        WHERE nit=?
+        AND id_usuario=?
+        """,
+        (
+            nit,
+            id_usuario
+        ))
 
         existe = cursor.fetchone()[0] > 0
 
@@ -142,12 +189,15 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
             SELECT COUNT(*)
             FROM emisor
             WHERE nit = ?
             AND id <> ?
-        """, (nit, id_emisor))
+            AND id_usuario=?
+        """, (nit, id_emisor, id_usuario))
 
         existe = cursor.fetchone()[0] > 0
 
@@ -160,10 +210,10 @@ class Emisor:
 
         conn = conectar()
         cursor = conn.cursor()
-
+        id_usuario= session.id()
         cursor.execute(
-            "SELECT COUNT(*) FROM emisor WHERE nrc = ?",
-            (nrc,)
+            "SELECT COUNT(*) FROM emisor WHERE nrc = ? AND id_usuario=?",
+            (nrc,id_usuario)
         )
 
         existe = cursor.fetchone()[0] > 0
@@ -178,12 +228,15 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
             SELECT COUNT(*)
             FROM emisor
             WHERE nrc = ?
             AND id <> ?
-        """, (nrc, id_emisor))
+            AND id_usuario=?
+        """, (nrc, id_emisor, id_usuario))
 
         existe = cursor.fetchone()[0] > 0
 
@@ -197,14 +250,38 @@ class Emisor:
         conn = conectar()
         cursor = conn.cursor()
 
+        id_usuario = session.id()
+
         cursor.execute("""
             SELECT tamaño_contribuyente
             FROM emisor
             WHERE id = ?
-        """, (id_emisor,))
+            AND id_usuario=?
+        """, (id_emisor,id_usuario))
 
         dato = cursor.fetchone()
 
         conn.close()
 
         return dato[0] if dato else None
+
+    @staticmethod
+    def obtener_datos_por_id(id_emisor):
+
+        conn = conectar()
+        cursor = conn.cursor()
+
+        id_usuario = session.id()
+        
+        cursor.execute("""
+            SELECT *
+            FROM emisor
+            WHERE id = ?
+            AND id_usuario=?
+        """, (id_emisor,id_usuario))
+
+        dato = cursor.fetchone()
+
+        conn.close()
+
+        return dato

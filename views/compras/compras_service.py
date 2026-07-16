@@ -17,13 +17,6 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
     
     if state.id_edicion is None:
 
-        print("========== CLASIFICACIÓN ==========")
-        print("Clasificación:", state.clasificacion_seleccionada)
-        print("Sector:", state.sector_seleccionado)
-        print("Tipo Gasto:", state.tipo_costo_gasto_seleccionado)
-        print("Tipo Operación:", state.tipo_operacion_seleccionado)
-        print("===================================")
-
         Factura.guardar(
             fecha_sql,
             controls.txt_codigo_generacion.value,
@@ -36,11 +29,6 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
             int(controls.dd_tipo_documento.value),
             int(controls.dd_emisor.value),
             int(controls.dd_clase_documento.value),
-
-            # int(controls.txt_clasificacion.value),
-            # int(controls.txt_sector.value),
-            # int(controls.txt_tipo_gasto.value),
-            # int(controls.txt_tipo_operacion.value),
 
             state.clasificacion_seleccionada,
             state.sector_seleccionado,
@@ -79,11 +67,11 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
             int(controls.dd_tipo_documento.value),
             int(controls.dd_emisor.value),
             int(controls.dd_clase_documento.value),
-
-            int(controls.dd_clasificacion.value),
-            int(controls.dd_sector.value),
-            int(controls.dd_tipo_gasto.value),
-            int(controls.dd_tipo_operacion.value),
+            
+            state.clasificacion_seleccionada,
+            state.sector_seleccionado,
+            state.tipo_costo_gasto_seleccionado,
+            state.tipo_operacion_seleccionado,
 
             state.periodo_actual,
         )

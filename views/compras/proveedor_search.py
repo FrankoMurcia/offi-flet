@@ -5,9 +5,9 @@ def seleccionar_emisor(emisor, controls, sugerencias, page):
 
         controls.dd_emisor.value = str(emisor[0])
 
-        controls.txt_buscar_nit.value = emisor[3] if emisor[3] else emisor[5]     # NIT
+        controls.txt_buscar_nit.value = emisor[4] if emisor[4] else emisor[6]     # NIT
 
-        controls.txt_nombre_emisor.value = emisor[1]   # Nombre
+        controls.txt_nombre_emisor.value = emisor[2]   # Nombre
 
         sugerencias.content.controls.clear()
         sugerencias.visible = False
@@ -82,8 +82,8 @@ def filtrar_emisor(e, state, controls, sugerencias, page):
             for emisor in state.emisores_cache
 
             if(
-                texto in str(emisor[3]).lower() or #NIT
-                texto in str(emisor[5]).lower() #NRC
+                texto in str(emisor[4]).lower() or #NIT
+                texto in str(emisor[6]).lower() #NRC
             )
         ]
         state.resultados_actuales = encontrados
@@ -94,7 +94,7 @@ def filtrar_emisor(e, state, controls, sugerencias, page):
 
              sugerencias.content.controls.append(
                 ft.Container(
-                    content=ft.Text(f"{emisor[1]} | NIT {emisor[3]} | NRC {emisor[5]}"),
+                    content=ft.Text(f"{emisor[2]} | NIT {emisor[4]} | NRC {emisor[6]}"),
 
                     padding=10,
                     border_radius=5,

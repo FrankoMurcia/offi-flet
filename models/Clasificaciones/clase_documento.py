@@ -12,8 +12,8 @@ class ClaseDocumento:
         return cls.CLASE_DOCUMENTO.items()
 
     @staticmethod
-    def obtener_por_id(cls, id__):
-        return cls.CLASE_DOCUMENTO.get(id__)
+    def obtener_por_id(id__):
+        return ClaseDocumento.CLASE_DOCUMENTO.get(id__)
 
     @staticmethod
     def existe(id_clase):

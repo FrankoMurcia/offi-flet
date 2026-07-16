@@ -2,85 +2,43 @@ import flet as ft
 
 from database.crear_tablas import crear_tablas
 
-from views.dashboard import dashboard
-from views.productos import vista_productos
-from views.emisor import vista_emisor
-from views.detalle_clasificador import vista_detalle_clasificador
-from views.compras.vista import vista_compras
+from auth.admin import crear_admin
+
+from auth.login import vista_login
+
+from views.shell.shell import crear_shell
+
 
 def main(page: ft.Page):
 
     crear_tablas()
 
-    page.title = "Sistema Facturación"
+    crear_admin()   # <-- ESTA LÍNEA FALTA
 
-    contenido = ft.Container(
-        expand=True
-    )
+    page.title = "Offi-Flet - Sistema de Libros Fiscales"
+    
+    page.window.icon = "assets/offiflet.ico"
 
-    def abrir_proveedor():
-        rail.selected_index = 2
-        contenido.content = vista_emisor(page)
+    contenido = ft.Container(expand=True)
+
+    page.add(contenido)
+
+    def mostrar_login():
+
+        contenido.content = vista_login(
+            page,
+            mostrar_sistema
+        )
+
         page.update()
 
-    def cambiar(e):
+    def mostrar_sistema():
 
-        if rail.selected_index == 0:
-            contenido.content = dashboard()
+        contenido.content = crear_shell(page, mostrar_login)
 
-        # elif rail.selected_index == 1:
-        #     contenido.content = vista_productos(page)
-
-        elif rail.selected_index == 1:
-            contenido.content = vista_emisor(page)
-
-        # elif rail.selected_index == 3:
-        #     contenido.content = vista_detalle_clasificador(page)
-
-        elif rail.selected_index == 2:
-            contenido.content = vista_compras(
-                page,
-                lambda: abrir_proveedor()
-                )
         page.update()
 
+    mostrar_login()
 
-    rail = ft.NavigationRail(
-        selected_index=0,
-        on_change=cambiar,
-        destinations=[
-            ft.NavigationRailDestination(
-                icon=ft.Icons.HOME,
-                label="Inicio"
-            ),
-            # ft.NavigationRailDestination(
-            #     icon=ft.Icons.INVENTORY,
-            #     label="Productos"
-            # ),
-            ft.NavigationRailDestination(
-                icon=ft.Icons.BUSINESS,
-                label= "Proveedores"
-            ),
-            # ft.NavigationRailDestination(
-            #     icon=ft.Icons.ACCOUNT_TREE,
-            #     label="Clasificador"
-            # ),
-            ft.NavigationRailDestination(
-                icon=ft.Icons.ARTICLE,
-                label="Compras"
-            )
-        ]
-    )
-
-    contenido.content = dashboard()
-
-    page.add(
-        ft.Row([
-            rail,
-            ft.VerticalDivider(),
-            contenido
-        ],
-        expand=True)
-    )
 
 ft.run(main)
