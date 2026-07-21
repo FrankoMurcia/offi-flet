@@ -126,7 +126,10 @@ def abrir_modal(page, state, controls, factura, limpiar, cargar, abrir_proveedor
             )
 
         def ir_a_proveedores(e):
-            dialog.open = False
+            if dialog is not None:
+                dialog.open = False
+            if getattr(page, "dialog", None) is dialog:
+                page.dialog = None
             page.update()
 
             limpiar()
@@ -141,7 +144,10 @@ def abrir_modal(page, state, controls, factura, limpiar, cargar, abrir_proveedor
         )
 
         def cerrar_modal(dialog):
-            dialog.open = False
+            if dialog is not None:
+                dialog.open = False
+            if getattr(page, "dialog", None) is dialog:
+                page.dialog = None
             page.update()
 
         dialog = crear_modal(

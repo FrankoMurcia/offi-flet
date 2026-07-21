@@ -1,7 +1,13 @@
 import flet as ft
 
+
 def cerrar_dialog(dialog, page):
-    dialog.open = False
+    if dialog is not None:
+        dialog.open = False
+
+    if getattr(page, "dialog", None) is dialog:
+        page.dialog = None
+
     page.update()
 
 def mostrar_error( page, titulo, mensaje):
