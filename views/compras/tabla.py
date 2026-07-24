@@ -142,6 +142,6 @@ def crear_tabla_compras(page, state, abrir_modal, mostrar_mensaje, mostrar_confi
                 )
             )
 
-        page.update()
+        #page.update()
 
     return tabla, cargar

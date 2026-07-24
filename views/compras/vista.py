@@ -4,7 +4,7 @@ from views.compras.export_controller import descargar_csv, descargar_excel
 #Nuevos
 from views.compras.modal_periodo import mostrar_modal_periodo, crear_nombre_periodo
 from views.compras.tabla import crear_tabla_compras
-from views.compras.dialogs import mostrar_error, mostrar_mensaje, mostrar_confirmacion
+from views.compras.dialogs import mostrar_confirmacion
 from views.compras.dropdowns import cargar_dropdowns, seleccionar_periodo, crear_dropdown_periodos
 from views.compras.modal_controller import abrir_modal
 from views.compras.form_actions import limpiar
@@ -14,6 +14,8 @@ from views.compras.suggestions_factory import crear_sugerencias, registrar_event
 from views.compras.buttons_factory import crear_btn_nueva_factura, crear_btn_exportar_csv, crear_btn_exportar_excel, crear_btn_exportar_casilla_163
 from views.compras.callbacks import crear_callback_modal
 from views.compras.compras_controller import ComprasController
+from views.compras.validaciones import mostrar_error
+from views.compras.dialogs import mostrar_mensaje
 
 def vista_compras(page: ft.Page, abrir_proveedor):
 
@@ -38,7 +40,7 @@ def vista_compras(page: ft.Page, abrir_proveedor):
     )
 
     accion_limpiar = lambda: limpiar(
-        page, state, controls, sugerencias
+        page, state, controls, sugerencias,
     )
 
     # ========= FUNCIONES =========       
@@ -126,11 +128,11 @@ def vista_compras(page: ft.Page, abrir_proveedor):
             dd_periodos
         ),
         cargar=cargar,
-        mostrar_error = lambda titulo, mensaje: mostrar_error(
-            page,
-            titulo,
-            mensaje
-        )
+        # mostrar_error = lambda titulo, mensaje: mostrar_error(
+        #     page,
+        #     titulo,
+        #     mensaje
+        # )
     )
     cargar()
 
@@ -138,8 +140,10 @@ def vista_compras(page: ft.Page, abrir_proveedor):
 
     return ft.Container(
         padding=20,
-        content=ft.Column(
-            [
+        expand=True,
+        content=ft.ListView(
+            expand=True,
+            controls=[
                 ft.Row(
                     [
                         ft.Column([
@@ -155,12 +159,17 @@ def vista_compras(page: ft.Page, abrir_proveedor):
                         btn_exportar_casilla_163,
                         btn_nueva_factura,
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
-                ft.Row(
-                    [tabla],
-                    scroll=ft.ScrollMode.AUTO
-                )
-            ]
-        )
+                ft.Container(
+                    expand=True,
+                    content=ft.Row(
+                        scroll=ft.ScrollMode.AUTO,   # Scroll horizontal
+                        controls=[
+                            tabla,
+                        ],
+                    ),
+                ),
+            ],
+        ),
     )

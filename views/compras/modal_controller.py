@@ -1,4 +1,5 @@
 from datetime import datetime
+import asyncio
 
 import flet as ft
 
@@ -10,9 +11,14 @@ from models.Clasificaciones.tipo_operacion import TipoOperacion
 from views.compras.clasificacion_service import actualizar_textos
 
 from views.compras.dialogs import (
-    mostrar_error,
     mostrar_confirmacion,
 )
+
+from views.compras.validaciones import (
+    mostrar_error,
+    mostrar_exito,
+)
+
 
 from views.compras.validaciones import (
     validar_guardado,
@@ -96,23 +102,66 @@ def abrir_modal(page, state, controls, factura, limpiar, cargar, abrir_proveedor
 
 
             def ejecutar_guardado():
+                try:
 
-                if compra_duplicada(state, controls):
-                    mostrar_error(
-                        page,
-                        "Factura duplicada",
-                        "Ya existe una compra."
+                    if compra_duplicada(state, controls):
+                        mostrar_error(
+                            page,
+                            "Factura duplicada",
+                            "Ya existe una compra."
+                        )
+                        return
+
+                    guardado = guardar_compra(state, controls, mostrar_error, page)
+
+                    if not guardado:
+                        return False
+
+                    print("1")
+                    cerrar_modal(dialog)
+                    page.update()
+
+                    print("2")
+                    limpiar()
+
+                    print("3")
+                    cargar()
+
+                    print("4")
+                    page.update()
+
+                    print("5")
+
+                    async def mostrar_exito_despues():
+
+                        await asyncio.sleep(0.3)
+
+                        if state.id_edicion is None:
+
+                            mostrar_exito(
+                                page,
+                                "Éxito",
+                                "Compra guardada correctamente."
+                            )
+
+                        else:
+
+                            mostrar_exito(
+                                page,
+                                "Éxito",
+                                "Compra actualizada correctamente."
+                            )
+
+
+                    page.run_task(
+                        mostrar_exito_despues
                     )
-                    return
 
-                guardar_compra(state, controls, mostrar_error, page)
+                    return True
 
-                dialog.open = False
-
-                limpiar()
-                cargar()
-
-                page.update()
+                except Exception as ex:
+                    print(ex)
+                    raise
 
             if not validar_guardado(state, controls, mostrar_error, page
             ):
@@ -144,11 +193,17 @@ def abrir_modal(page, state, controls, factura, limpiar, cargar, abrir_proveedor
         )
 
         def cerrar_modal(dialog):
+
+            print("Entro a cerrar_modal")
+
             if dialog is not None:
                 dialog.open = False
+
             if getattr(page, "dialog", None) is dialog:
                 page.dialog = None
+
             page.update()
+            print("Salio de cerrar_modal")
 
         dialog = crear_modal(
             titulo=titulo,
@@ -160,6 +215,7 @@ def abrir_modal(page, state, controls, factura, limpiar, cargar, abrir_proveedor
             guardar_modal=guardar_modal,
             cerrar_modal=cerrar_modal,
         )
+        print("ID crear_modal:", id(dialog))
 
         page.show_dialog(dialog)
         page.update()

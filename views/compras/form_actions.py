@@ -30,4 +30,4 @@ def limpiar(page,state,controls, sugerencias):
         if controls.btn_nuevo_proveedor:
             controls.btn_nuevo_proveedor.visible = False
 
-        page.update()
+        #page.update()

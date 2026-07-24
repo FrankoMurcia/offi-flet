@@ -156,3 +156,86 @@ class FormularioEmisor:
             self.txt_correo,
             self.txt_direccion,
         ]
+
+    def construir_formulario(self):
+        return ft.Column(
+            [
+                # ---------------- INFORMACIÓN GENERAL ----------------
+                ft.Row(
+                    [
+                        ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.BLUE),
+                        ft.Text(
+                            "Información General",
+                            size=18,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                    ]
+                ),
+                ft.Divider(),
+
+                ft.ResponsiveRow(
+                    [
+                        self.txt_nombre_comercial,
+                        self.txt_razon_social,
+                        self.txt_nit,
+                        self.txt_dui,
+                        self.txt_nrc,
+                    ],
+                    spacing=15,
+                    run_spacing=15,
+                ),
+
+                ft.Container(height=10),
+
+                # ---------------- INFORMACIÓN TRIBUTARIA ----------------
+                ft.Row(
+                    [
+                        ft.Icon(ft.Icons.DESCRIPTION_OUTLINED,
+                                color=ft.Colors.BLUE),
+                        ft.Text(
+                            "Información Tributaria",
+                            size=18,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                    ]
+                ),
+                ft.Divider(),
+
+                ft.ResponsiveRow(
+                    [
+                        self.ddl_tamaño_contribuyente,
+                        self.txt_actividad,
+                    ],
+                    spacing=15,
+                    run_spacing=15,
+                ),
+
+                ft.Container(height=10),
+
+                # ---------------- CONTACTO ----------------
+                ft.Row(
+                    [
+                        ft.Icon(ft.Icons.CONTACT_PHONE_OUTLINED,
+                                color=ft.Colors.BLUE),
+                        ft.Text(
+                            "Información de Contacto",
+                            size=18,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                    ]
+                ),
+                ft.Divider(),
+
+                ft.ResponsiveRow(
+                    [
+                        self.txt_telefono,
+                        self.txt_correo,
+                        self.txt_direccion,
+                    ],
+                    spacing=15,
+                    run_spacing=15,
+                ),
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            spacing=5,
+        )

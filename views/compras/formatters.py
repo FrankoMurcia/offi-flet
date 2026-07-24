@@ -43,8 +43,13 @@ def formatear_codigo_generacion(e, txt_codigo_generacion, page):
                     resultado += "-"
                 resultado += valor[posicion:posicion + grupo]
             posicion += grupo
+
+        #  No actualizar si el valor ya es el mismo
+        # if txt_codigo_generacion.value == resultado:
+        #     return
+        
         txt_codigo_generacion.value = resultado
-        page.update()
+        txt_codigo_generacion.update()
 
 #Formateador de numero de control
 def formatear_numero_control(e, txt_numero_control, page):

@@ -1,64 +1,45 @@
 import flet as ft
+import asyncio
+from views.compras.validaciones import mostrar_error, mostrar_exito
 
-
-def cerrar_dialog(dialog, page):
-    if dialog is not None:
-        dialog.open = False
-
-    if getattr(page, "dialog", None) is dialog:
-        page.dialog = None
-
-    page.update()
-
-def mostrar_error( page, titulo, mensaje):
-
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(titulo),
-            content=ft.Text(mensaje),
-            actions=[
-                ft.TextButton(
-                    "Aceptar",
-                    on_click=lambda e: cerrar_dialog(dialog, page)
-                )
-            ]
-        )
-        page.show_dialog(dialog)
 
 def mostrar_mensaje(page, texto):
+    mostrar_error(page, "Aviso", texto)
 
-        page.snack_bar = ft.SnackBar(
-            content=ft.Text(texto)
-        )
-
-        page.snack_bar.open = True
-        page.update()
 
 def mostrar_confirmacion(page, titulo, mensaje, accion):
 
-        def confirmar(e):
-            dialog.open = False
-            page.update()
+    dialog = None
+
+    def cerrar(e=None):
+        dialog.open = False
+        page.update()
+
+    def confirmar(e):
+
+        cerrar()
+
+        async def ejecutar():
+            await asyncio.sleep(0.1)
             accion()
 
-        def cancelar(e):
-            dialog.open = False
-            page.update()
+        page.run_task(ejecutar)
 
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(titulo),
-            content=ft.Text(mensaje),
-            actions=[
-                ft.TextButton(
-                    "Cancelar",
-                    on_click=cancelar
-                ),
-                ft.TextButton(
-                    "Confirmar",
-                    on_click=confirmar
-                )
-            ]
-        )
+    dialog = ft.AlertDialog(
+        modal=True,
+        title=ft.Text(titulo),
+        content=ft.Text(mensaje),
+        actions=[
+            ft.TextButton(
+                "Cancelar",
+                on_click=cerrar
+            ),
+            ft.ElevatedButton(
+                "Confirmar",
+                icon=ft.Icons.CHECK,
+                on_click=confirmar
+            )
+        ]
+    )
 
-        page.show_dialog(dialog)
+    page.show_dialog(dialog)

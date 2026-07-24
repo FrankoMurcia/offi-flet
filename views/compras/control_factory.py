@@ -4,8 +4,9 @@ from views.compras.controls import ComprasControls
 from views.compras.formatters import formatear_fecha, formatear_codigo_generacion, formatear_numero_control, formatear_sello_recepcion, formatear_subtotal
 from views.compras.calculations import calcular_totales
 from views.compras.validaciones import validar_factura_existente
-from views.compras.dialogs import mostrar_error
+# from views.compras.dialogs import mostrar_error
 from views.compras.proveedor_search import filtrar_emisor
+from views.compras.validaciones import mostrar_error
 
 def crear_controles (page, state, sugerencias):
     
@@ -28,11 +29,7 @@ def crear_controles (page, state, sugerencias):
         width=300,
         prefix_icon=ft.Icons.QR_CODE,
         on_change= lambda e: formatear_codigo_generacion(e, controls.txt_codigo_generacion, page),
-        on_blur = lambda e: validar_factura_existente(controls, lambda titulo, mensaje: mostrar_error(
-            page,
-            titulo,
-            mensaje
-        ))
+        on_blur = lambda e: validar_factura_existente(controls, lambda titulo, mensaje: mostrar_error(page, titulo, mensaje), page)
     )
 
     controls.txt_numero_control = ft.TextField(

@@ -13,7 +13,40 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
         "%d-%m-%Y"
     ).strftime("%Y-%m-%d")
 
-    subtotal = float(controls.txt_subtotal.value.replace(",", ""))
+
+    # ==============================
+    # Código de generación
+    # ==============================
+
+    codigo_generacion = (
+        controls.txt_codigo_generacion.value or ""
+    ).strip().upper()
+
+    if not codigo_generacion:
+        mostrar_error(
+            page,
+            "Error",
+            "El Código de Generación es obligatorio."
+        )
+        return
+    
+    # ==============================
+    # Subtotal
+    # ==============================
+
+    subtotal_texto = (
+        controls.txt_subtotal.value or ""
+    ).replace(",", "").strip()
+
+    try:
+        subtotal = float(subtotal_texto)
+    except ValueError:
+        mostrar_error(
+            page,
+            "Error",
+            "El subtotal no es válido."
+        )
+        return
     
     if state.id_edicion is None:
 
@@ -43,7 +76,7 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
             float(controls.txt_importaciones_gravadas_bienes.value or 0),
             float(controls.txt_importaciones_gravadas_servicios.value or 0),
         )
-
+        return True
     else:
 
         Factura.editar(
@@ -75,6 +108,9 @@ def guardar_compra(state, controls, mostrar_error, page: ft.Page):
 
             state.periodo_actual,
         )
+        return True
+    
+    return False
 
 def compra_duplicada(state, controls):
 

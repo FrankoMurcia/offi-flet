@@ -2,8 +2,9 @@ import flet as ft
 from datetime import datetime
 
 from models.periodo import Periodo
+from views.compras.validaciones import mostrar_error
 
-def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva_factura,seleccionar_periodo,cargar,mostrar_error,):
+def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva_factura,seleccionar_periodo,cargar,):
     
 
     def cerrar_modal(dialog):
@@ -33,6 +34,7 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
 
             if not txt_nuevo_periodo.value.strip():
                 mostrar_error(
+                    page,
                     "Validación",
                     "Debe ingresar un nombre."
                 )
@@ -40,6 +42,7 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
 
             if not dd_anio.value:
                 mostrar_error(
+                    page,
                     "Validación",
                     "Debe seleccionar un año."
                 )
@@ -89,6 +92,7 @@ def mostrar_modal_periodo(page,state,dd_periodos,nombre_periodo_actual,btn_nueva
 
         if not dd_periodos.value:
             mostrar_error(
+                page,
                 "Período requerido",
                 "Debe seleccionar un período."
             )

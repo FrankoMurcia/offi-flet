@@ -5,6 +5,7 @@ from models.Clasificaciones.sector import Sector
 from models.Clasificaciones.tipo_costo_gasto import TipoCostoGasto
 from models.Clasificaciones.tipo_operacion import TipoOperacion
 from views.compras.clasificacion_service import actualizar_textos
+from views.compras.validaciones import mostrar_error
 
 def mostrar_modal_clasificacion(page, state, controls):
 
@@ -79,35 +80,19 @@ def mostrar_modal_clasificacion(page, state, controls):
     def aceptar(e):
 
         if not dd_clasificacion.value:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("Debe seleccionar una Clasificación")
-            )
-            page.snack_bar.open = True
-            page.update()
+            mostrar_error(page, "Validación", "Debe seleccionar una Clasificación")
             return
 
         if not dd_sector.value:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("Debe seleccionar un Sector")
-            )
-            page.snack_bar.open = True
-            page.update()
+            mostrar_error(page, "Validación", "Debe seleccionar un Sector")
             return
 
         if not dd_tipo_costo.value:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("Debe seleccionar un Tipo de Costo/Gasto")
-            )
-            page.snack_bar.open = True
-            page.update()
+            mostrar_error(page, "Validación", "Debe seleccionar un Tipo de Costo/Gasto")
             return
 
         if not dd_tipo_operacion.value:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("Debe seleccionar un Tipo de Operación")
-            )
-            page.snack_bar.open = True
-            page.update()
+            mostrar_error(page, "Validación", "Debe seleccionar un Tipo de Operación")
             return
 
         # guardar estados
